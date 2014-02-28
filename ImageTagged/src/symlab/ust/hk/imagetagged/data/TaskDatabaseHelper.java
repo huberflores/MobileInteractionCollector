@@ -21,12 +21,14 @@ public class TaskDatabaseHelper extends SQLiteOpenHelper {
 	public void onCreate(SQLiteDatabase db) {
 		// TODO Auto-generated method stub
 		TaskDescriptor.onCreate(db);
+		TapScreenDescriptor.onCreate(db);
 	}
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		// TODO Auto-generated method stub
 		TaskDescriptor.onUpgrade(db, oldVersion, newVersion);
+	
 	}
 
 }

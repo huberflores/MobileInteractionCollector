@@ -3,6 +3,7 @@ package symlab.ust.hk.imagetagged.contentprovider;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import symlab.ust.hk.imagetagged.data.TapScreenDescriptor;
 import symlab.ust.hk.imagetagged.data.TaskDatabaseHelper;
 import symlab.ust.hk.imagetagged.data.TaskDescriptor;
 import android.content.ContentProvider;
@@ -21,11 +22,19 @@ public class MyTaskContentProvider extends ContentProvider {
 	
 	private static final String AUTHORITY = "symlab.ust.hk.imagetagged.contentprovider";
 	
+	//Table that collects button events
 	private static final String BASE_PATH = "tasks";
 	  public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY
 	      + "/" + BASE_PATH);
-	  
+	
+	
+	//Table that collects screen taps
+	private static final String BASE_TAPS = "taps";
+	public static final Uri CONTENT_URI_TAPS = Uri.parse("content://"+ AUTHORITY
+		      + "/" + BASE_TAPS); 
 
+	
+	//Used by tasks
 	public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE
 	      + "/tasks";
 	
@@ -35,12 +44,26 @@ public class MyTaskContentProvider extends ContentProvider {
 	private static final int TASKS = 10;
 	private static final int TASK_ID = 20;
 	
+	//Used by taps
+	public static final String CONTENT_TYPE_TAPS = ContentResolver.CURSOR_DIR_BASE_TYPE
+		      + "/taps";
+		
+		public static final String CONTENT_ITEM_TYPE_TAPS = ContentResolver.CURSOR_ITEM_BASE_TYPE
+		      + "/tap";
+		
+	
+	private static final int TAPS = 30;
+	private static final int TAP_ID = 40;
+	
+	
 	private static final UriMatcher sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 	  static {
 	    sURIMatcher.addURI(AUTHORITY, BASE_PATH, TASKS);
 	    sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/#", TASK_ID);
+	    sURIMatcher.addURI(AUTHORITY, BASE_TAPS, TAPS);
+	    sURIMatcher.addURI(AUTHORITY, BASE_TAPS + "/#", TAP_ID);
 	  }
-	
+		  
 	
 	@Override
 	public String getType(Uri uri) {
@@ -57,6 +80,10 @@ public class MyTaskContentProvider extends ContentProvider {
 		switch (uriType) {
 		case TASKS:
 		  id = sqlDB.insert(TaskDescriptor.TABLE_TASK, null, values);
+		  break;
+		  
+		case TAPS:
+			id = sqlDB.insert(TapScreenDescriptor.TABLE_TAP, null, values);
 		  break;
 		default:
 		  throw new IllegalArgumentException("Unknown URI: " + uri);
@@ -78,20 +105,30 @@ public class MyTaskContentProvider extends ContentProvider {
 		// Using SQLiteQueryBuilder instead of query() method
 		SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
 	  // check if the caller has requested a column which does not exists
-		checkColumns(projection);
-
-		// Set the table
-		queryBuilder.setTables(TaskDescriptor.TABLE_TASK);
+			
 
 		int uriType = sURIMatcher.match(uri);
 		switch (uriType) {
 		case TASKS:
+			// Set the table
+			checkColumns(projection);
+			queryBuilder.setTables(TaskDescriptor.TABLE_TASK);
 		  break;
 		case TASK_ID:
 		  // adding the ID to the original query
 		  queryBuilder.appendWhere(TaskDescriptor.COLUMN_TASK_ID + "="
 		      + uri.getLastPathSegment());
 		  break;
+		case TAPS:
+			queryBuilder.setTables(TapScreenDescriptor.TABLE_TAP);
+			break;
+		
+		case TAP_ID:
+			  queryBuilder.appendWhere(TapScreenDescriptor.COLUMN_TAP_ID + "="
+				      + uri.getLastPathSegment());
+			break;
+				  
+		  
 		default:
 		  throw new IllegalArgumentException("Unknown URI: " + uri);
 		}  
@@ -164,6 +201,31 @@ public class MyTaskContentProvider extends ContentProvider {
 	            selectionArgs);
 	      }
 	      break;
+	     
+	    case TAPS:
+	    	rowsUpdated = sqlDB.update(TapScreenDescriptor.TABLE_TAP, 
+	  	          values, 
+	  	          selection,
+	  	          selectionArgs);	    	
+	    	break;
+	    
+	    case TAP_ID:
+	    	String idtap = uri.getLastPathSegment();
+		      if (TextUtils.isEmpty(selection)) {
+		        rowsUpdated = sqlDB.update(TapScreenDescriptor.TABLE_TAP, 
+		            values,
+		            TaskDescriptor.COLUMN_TASK_ID + "=" + idtap, 
+		            null);
+		      } else {
+		        rowsUpdated = sqlDB.update(TapScreenDescriptor.TABLE_TAP, 
+		            values,
+		            TaskDescriptor.COLUMN_TASK_ID + "=" + idtap 
+		            + " and " 
+		            + selection,
+		            selectionArgs);
+		      }
+		      break;
+	      
 	    default:
 	      throw new IllegalArgumentException("Unknown URI: " + uri);
 	    }
