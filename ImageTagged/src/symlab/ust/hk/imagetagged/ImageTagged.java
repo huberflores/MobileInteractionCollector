@@ -48,10 +48,7 @@ GestureDetector.OnDoubleTapListener{
         mDetector = new GestureDetectorCompat(this,this);
         mDetector.setOnDoubleTapListener(this);
 
-        
-        
         //extractDatabaseFile(new DatabaseCommons());
-          
     }
 
     @Override
@@ -67,7 +64,7 @@ GestureDetector.OnDoubleTapListener{
 		
 			case R.id.btn_start: 
 			
-				 dManager.saveData("Button Enter", "Press/Release event", press, release, "task");
+				 dManager.saveData("Button Enter", "Press/Release event", press, release);
 				 Intent intent = new Intent(getApplicationContext(), TasksActivity.class);
 				 intent.putExtra("db", dbUri);
 		         startActivity(intent);       

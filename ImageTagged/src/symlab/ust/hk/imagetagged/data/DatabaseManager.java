@@ -15,7 +15,7 @@ public class DatabaseManager {
 		this.dContext = c;
 	}
 	
-	public void saveData(String buttonName, String description, double pressTime, double releaseTime, String table){
+	public void saveData(String buttonName, String description, double pressTime, double releaseTime){
 		ContentValues values = new ContentValues();
 		values.put(TaskDescriptor.COLUMN_CURRENT_TASK_NAME, "Activity: " + Commons.currentTask);
 		values.put(TaskDescriptor.COLUMN_TASK_BUTTON_ID, buttonName);
