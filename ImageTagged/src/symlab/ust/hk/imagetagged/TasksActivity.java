@@ -7,6 +7,7 @@ import symlab.ust.hk.imagetagged.Utilities.Commons;
 import symlab.ust.hk.imagetagged.contentprovider.MyTaskContentProvider;
 import symlab.ust.hk.imagetagged.data.DatabaseManager;
 import android.app.Activity;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.GestureDetector;
@@ -65,7 +66,11 @@ GestureDetector.OnDoubleTapListener{
 				case R.id.btn_task1: 
 				
 					 dManager.saveData("Button \"Task 1\"", "Press/Release event", press, release);
-			        
+					 Intent intent1 = new Intent(getApplicationContext(), ProcessTask.class);
+					 intent1.putExtra("taskName", "Task 1");
+			         startActivity(intent1);
+					 
+					 
 					break;		
 					
 				case R.id.btn_task2: 

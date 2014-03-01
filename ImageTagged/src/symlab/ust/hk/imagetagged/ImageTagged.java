@@ -24,7 +24,7 @@ GestureDetector.OnDoubleTapListener{
 	
 	private Logger Log = Logger.getLogger(ImageTagged.class.getName());
 
-	private Uri dbUri;
+	private Uri dbUri; 
 	private double press = 0f;
 	private double release = 0f;
 	
