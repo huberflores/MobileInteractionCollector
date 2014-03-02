@@ -1,6 +1,13 @@
 package symlab.ust.hk.imagetagged;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import symlab.ust.hk.imagetagged.R;
@@ -10,6 +17,9 @@ import symlab.ust.hk.imagetagged.data.DatabaseManager;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
+import android.graphics.BitmapFactory;
 import android.support.v4.view.GestureDetectorCompat;
 import android.view.Menu;
 import android.view.MotionEvent;
@@ -23,10 +33,14 @@ public class ImageTagged extends Activity implements android.view.View.OnClickLi
 GestureDetector.OnDoubleTapListener{
 	
 	private Logger Log = Logger.getLogger(ImageTagged.class.getName());
+	private static final int TAKE_PICTURE_CODE = 100;
 
 	private Uri dbUri; 
 	private double press = 0f;
 	private double release = 0f;
+	
+	private List<String> listOfImages = null;
+	private String root="/";
 	
     private GestureDetectorCompat mDetector;
     
@@ -41,6 +55,20 @@ GestureDetector.OnDoubleTapListener{
         btn_start.setOnClickListener(this);
         
         btn_start.setOnTouchListener(btnTouch); 
+        
+        Button btn_takePicture = (Button) findViewById(R.id.btn_takePicture);
+        btn_takePicture.setOnClickListener(this);
+        
+        btn_takePicture.setOnTouchListener(btnTouch);
+        
+        getDir(Commons.appPicturesPath);
+        if (listOfImages.size() > 0){
+        	
+        }else{
+        	btn_start.setEnabled(false);
+        }
+        
+        
         
         dManager = new DatabaseManager(this);
     	dManager.setDbUri(dbUri);
@@ -64,12 +92,18 @@ GestureDetector.OnDoubleTapListener{
 		
 			case R.id.btn_start: 
 			
-				 dManager.saveData("Button Enter", "Press/Release event", press, release);
+				 dManager.saveData("Button - Enter", "Press/Release event", press, release);
 				 Intent intent = new Intent(getApplicationContext(), TasksActivity.class);
 				 intent.putExtra("db", dbUri);
 		         startActivity(intent);       
 		        
-				break;		
+				break;	
+				
+			case R.id.btn_takePicture:
+				
+				dManager.saveData("Button - Take Picture", "Press/Release event", press, release);
+				openCamera();
+				break;
 		}		
 		
 	}
@@ -167,6 +201,84 @@ GestureDetector.OnDoubleTapListener{
 	   	
 	 return true;
 	}
+	
+	//Camera
+	@Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+            super.onActivityResult(requestCode, resultCode, data);
+     
+            if(TAKE_PICTURE_CODE == requestCode){
+                    processCameraImage(data);
+            }
+    }
+ 
+	private void openCamera(){
+		Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+     
+		startActivityForResult(intent, TAKE_PICTURE_CODE);
+	}
+	
+	private void processCameraImage(Intent intent){
+	    
+	     
+	    Bitmap rawBitmap = (Bitmap)intent.getExtras().get("data");
+
+	    ByteArrayOutputStream bos = new ByteArrayOutputStream(); 
+	    rawBitmap.compress(CompressFormat.PNG, 0 /*ignored for PNG*/, bos); 
+	    byte[] bitmapdata = bos.toByteArray();
+	    ByteArrayInputStream bs = new ByteArrayInputStream(bitmapdata);
+	   
+	    
+	    BitmapFactory.Options bitmapFatoryOptions=new BitmapFactory.Options();
+		bitmapFatoryOptions.inPreferredConfig=Bitmap.Config.RGB_565;
+		Bitmap cameraBitmap=BitmapFactory.decodeStream(bs);
+		
+	    
+		
+		String filepath = Commons.appPicturesPath + "facedetect" + System.currentTimeMillis() + ".jpg";
+        
+        try {
+                FileOutputStream fos = new FileOutputStream(filepath);
+                 
+                cameraBitmap.compress(CompressFormat.JPEG, 90, fos);
+                 
+                fos.flush();
+                fos.close();
+        } catch (FileNotFoundException e) {
+                e.printStackTrace();
+        } catch (IOException e) {
+                e.printStackTrace();
+        }
+
+		
+		
+	}
+	
+	private void getDir(String dirPath)
+	 {
+		 
+		 listOfImages = new ArrayList<String>();
+
+		 File f = new File(dirPath);
+		 File[] files = f.listFiles();
+
+		 for(int i=0; i < files.length; i++)
+		 {
+			 File file = files[i];
+			 String filename = file.getName();
+			 String ext = filename.substring(filename.lastIndexOf('.')+1, filename.length());
+
+			  if(ext.equals("JPG")||ext.equals("jpg")||ext.equals("PNG")||ext.equals("png"))
+			  {
+				listOfImages.add(file.getPath());  
+			  }
+			   
+		 }
+
+		 
+	  }
+
+	
 	
 	//Lifecycle activity management
 	@Override

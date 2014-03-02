@@ -8,22 +8,14 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".ImageTagged" >
 
-    <Button
-        android:id="@+id/btn_start"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="117dp"
-        android:text="Go to experiments" />
 
     <Button
-        android:id="@+id/btn_takePicture"
+        android:id="@+id/btn_QoEPicture"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="45dp"
-        android:text="Take Picture" />
+        android:text="Provide your photo" />
 
 </RelativeLayout>

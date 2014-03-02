@@ -23,6 +23,8 @@ public class ProcessTask extends Activity implements android.view.View.OnClickLi
 	 private boolean buttonAction;
 	 MessageReceiver receiver;
 	 
+	 private String selectedImage;
+		 
 	 
 	 @Override
 	 protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +58,7 @@ public class ProcessTask extends Activity implements android.view.View.OnClickLi
 					}else{
 						//Go results
 						Intent intent = new Intent(getApplicationContext(), FaceDetectionView.class);
+						intent.putExtra("selectedImage", selectedImage);
 				        startActivity(intent);
 
 					}
@@ -92,6 +95,7 @@ public class ProcessTask extends Activity implements android.view.View.OnClickLi
 	         boolean iscloud = intent.getBooleanExtra("taskValue", false);
 	         if(iscloud){
 	         String status = intent.getStringExtra("taskStatusValue");
+	         selectedImage = intent.getStringExtra("selectedImage");
 	         		changeTaskStatus(status);
 	         }
 	         

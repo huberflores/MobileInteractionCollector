@@ -28,6 +28,7 @@ GestureDetector.OnDoubleTapListener{
 	private double release = 0f;
 	
 	private GestureDetectorCompat mDetector;
+
 	
 	
 	 @Override
@@ -66,6 +67,7 @@ GestureDetector.OnDoubleTapListener{
 				case R.id.btn_task1: 
 				
 					 dManager.saveData("Button \"Task 1\"", "Press/Release event", press, release);
+					 
 					 Intent intent1 = new Intent(getApplicationContext(), ProcessTask.class);
 					 intent1.putExtra("taskName", "Task 1");
 			         startActivity(intent1);
@@ -126,6 +128,19 @@ GestureDetector.OnDoubleTapListener{
 					 dManager.saveData("Button \"Task 10\"", "Press/Release event", press, release);
 			        
 					break;
+					
+				case R.id.QoE:
+					  
+					dManager.saveData("Button \"QoE\"", "Press/Release event", press, release);
+					
+					 Intent intentQoE = new Intent(getApplicationContext(), QoEActivity.class);
+					 intentQoE.putExtra("taskName", "QoE");
+			         startActivity(intentQoE);
+					 
+					
+					break;
+					
+				
 			}		
 			
 		}
@@ -181,9 +196,19 @@ GestureDetector.OnDoubleTapListener{
 	        btn_task10.setOnTouchListener(btnTouchTask10);
 	        btn_task10.setEnabled(false);
 	        
+	        Button btn_QoERating = (Button) findViewById(R.id.QoE);
+	        btn_QoERating.setOnClickListener(this);
+	        btn_QoERating.setOnTouchListener(btnTouchTaskQoE);
+	        //btn_QoERating.setEnabled(false);
+	        
 	        
 	 	}
 	 	
+	 	/*
+	 	 * Duplication can be avoided by using only one View.OnTouchListener
+	 	 * For this experiment, we declare multiple methods in order to avoid 
+	 	 * potential conflicts
+	 	 */
 	 	private View.OnTouchListener btnTouchTask1 = new View.OnTouchListener() {
 		    @Override
 		    public boolean onTouch(View v, MotionEvent event) {
@@ -295,6 +320,18 @@ GestureDetector.OnDoubleTapListener{
 		  };
 		  
 		  private View.OnTouchListener btnTouchTask10 = new View.OnTouchListener() {
+			    @Override
+			    public boolean onTouch(View v, MotionEvent event) {
+			         int action = event.getAction();
+			         if (action == MotionEvent.ACTION_DOWN)
+			       	   press = System.currentTimeMillis();
+			         else if (action == MotionEvent.ACTION_UP)
+			           release = System.currentTimeMillis();
+			         return false;   
+			      }
+		  };
+		  
+		  private View.OnTouchListener btnTouchTaskQoE = new View.OnTouchListener() {
 			    @Override
 			    public boolean onTouch(View v, MotionEvent event) {
 			         int action = event.getAction();
