@@ -28,8 +28,21 @@ GestureDetector.OnDoubleTapListener{
 	private double release = 0f;
 	
 	private GestureDetectorCompat mDetector;
-
 	
+	public static String statusFinished = "Finished";
+	
+	Button btn_task1;
+	Button btn_task2;  
+	Button btn_task3;
+	Button btn_task4; 
+	Button btn_task5;
+	Button btn_task6;
+	Button btn_task7;
+	Button btn_task8;
+	Button btn_task9;
+	Button btn_task10;
+	Button btn_QoERating;
+
 	
 	 @Override
 	    public void onCreate(Bundle savedInstanceState) {
@@ -64,68 +77,119 @@ GestureDetector.OnDoubleTapListener{
 		public void onClick(View v) {
 			switch (v.getId()) {
 			
-				case R.id.btn_task1: 
+				case R.id.btn_task1:  
 				
 					 dManager.saveData("Button \"Task 1\"", "Press/Release event", press, release);
 					 
 					 Intent intent1 = new Intent(getApplicationContext(), ProcessTask.class);
+					 intent1.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+					 intent1.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 					 intent1.putExtra("taskName", "Task 1");
-			         startActivity(intent1);
+					 startActivity(intent1);
+	
 					 
 					 
 					break;		
 					
-				case R.id.btn_task2: 
+				case R.id.btn_task2:  
 					
 					 dManager.saveData("Button \"Task 2\"", "Press/Release event", press, release);
+					 
+					 Intent intent2 = new Intent(getApplicationContext(), ProcessTask.class);
+					 intent2.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+					 intent2.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+					 intent2.putExtra("taskName", "Task 2");
+					 startActivity(intent2);
+	
 			        
 					break;
 					
 				case R.id.btn_task3: 
 					
 					 dManager.saveData("Button \"Task 3\"", "Press/Release event", press, release);
+					 Intent intent3 = new Intent(getApplicationContext(), ProcessTask.class);
+					 intent3.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+					 intent3.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+					 intent3.putExtra("taskName", "Task 3");
+					 startActivity(intent3);
+					 
 			        
 					break;
 					
 				case R.id.btn_task4: 
 					
 					 dManager.saveData("Button \"Task 4\"", "Press/Release event", press, release);
+					 Intent intent4 = new Intent(getApplicationContext(), ProcessTask.class);
+					 intent4.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+					 intent4.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+					 intent4.putExtra("taskName", "Task 4");
+					 startActivity(intent4);
 			        
 					break;
 					
 				case R.id.btn_task5: 
 					
 					 dManager.saveData("Button \"Task 5\"", "Press/Release event", press, release);
+					 Intent intent5 = new Intent(getApplicationContext(), ProcessTask.class);
+					 intent5.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+					 intent5.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+					 intent5.putExtra("taskName", "Task 5");
+					 startActivity(intent5);
 			        
 					break;
 					
 				case R.id.btn_task6: 
 					
 					 dManager.saveData("Button \"Task 6\"", "Press/Release event", press, release);
+					 Intent intent6 = new Intent(getApplicationContext(), ProcessTask.class);
+					 intent6.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+					 intent6.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+					 intent6.putExtra("taskName", "Task 6");
+					 startActivity(intent6);
 			        
 					break;
 					
 				case R.id.btn_task7: 
 					
 					 dManager.saveData("Button \"Task 7\"", "Press/Release event", press, release);
+					 Intent intent7 = new Intent(getApplicationContext(), ProcessTask.class);
+					 intent7.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+					 intent7.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+					 intent7.putExtra("taskName", "Task 7");
+					 startActivity(intent7);
 			        
 					break;
 				
 				case R.id.btn_task8: 
 					
 					 dManager.saveData("Button \"Task 8\"", "Press/Release event", press, release);
+					 Intent intent8 = new Intent(getApplicationContext(), ProcessTask.class);
+					 intent8.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+					 intent8.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+					 intent8.putExtra("taskName", "Task 8");
+					 startActivity(intent8);
 			        
 					break;
 					
 				case R.id.btn_task9: 
 					
 					 dManager.saveData("Button \"Task 9\"", "Press/Release event", press, release);
+					 Intent intent9 = new Intent(getApplicationContext(), ProcessTask.class);
+					 intent9.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+					 intent9.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+					 intent9.putExtra("taskName", "Task 9");
+					 startActivity(intent9);
 			        
 					break;
 					
 				case R.id.btn_task10: 
 					
 					 dManager.saveData("Button \"Task 10\"", "Press/Release event", press, release);
+					 Intent intent10 = new Intent(getApplicationContext(), ProcessTask.class);
+					 intent10.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+					 intent10.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+					 intent10.putExtra("taskName", "Task 10");
+					 startActivity(intent10);
 			        
 					break;
 					
@@ -147,59 +211,59 @@ GestureDetector.OnDoubleTapListener{
 	 
 	 
 	 	public void taskButtons(){
-	 		Button btn_task1 = (Button) findViewById(R.id.btn_task1);
+	 		btn_task1 = (Button) findViewById(R.id.btn_task1);
 	        btn_task1.setOnClickListener(this);
 	        btn_task1.setOnTouchListener(btnTouchTask1);
 	        
-	        Button btn_task2 = (Button) findViewById(R.id.btn_task2);
+	        btn_task2 = (Button) findViewById(R.id.btn_task2);
 	        btn_task2.setOnClickListener(this);
 	        btn_task2.setOnTouchListener(btnTouchTask2);
 	        btn_task2.setEnabled(false);
 	        
-	        Button btn_task3 = (Button) findViewById(R.id.btn_task3);
+	        btn_task3 = (Button) findViewById(R.id.btn_task3);
 	        btn_task3.setOnClickListener(this);
 	        btn_task3.setOnTouchListener(btnTouchTask3);
 	        btn_task3.setEnabled(false);
 	        
-	        Button btn_task4 = (Button) findViewById(R.id.btn_task4);
+	        btn_task4 = (Button) findViewById(R.id.btn_task4);
 	        btn_task4.setOnClickListener(this);
 	        btn_task4.setOnTouchListener(btnTouchTask4);
 	        btn_task4.setEnabled(false);
 	        
-	        Button btn_task5 = (Button) findViewById(R.id.btn_task5);
+	        btn_task5 = (Button) findViewById(R.id.btn_task5);
 	        btn_task5.setOnClickListener(this);
 	        btn_task5.setOnTouchListener(btnTouchTask5);
 	        btn_task5.setEnabled(false);
 	        
-	        Button btn_task6 = (Button) findViewById(R.id.btn_task6);
+	        btn_task6 = (Button) findViewById(R.id.btn_task6);
 	        btn_task6.setOnClickListener(this);
 	        btn_task6.setOnTouchListener(btnTouchTask6);
 	        btn_task6.setEnabled(false);
 	        
-	        Button btn_task7 = (Button) findViewById(R.id.btn_task7);
+	        btn_task7 = (Button) findViewById(R.id.btn_task7);
 	        btn_task7.setOnClickListener(this);
 	        btn_task7.setOnTouchListener(btnTouchTask7);
 	        btn_task7.setEnabled(false);
 	        
-	        Button btn_task8 = (Button) findViewById(R.id.btn_task8);
+	        btn_task8 = (Button) findViewById(R.id.btn_task8);
 	        btn_task8.setOnClickListener(this);
 	        btn_task8.setOnTouchListener(btnTouchTask8);
 	        btn_task8.setEnabled(false);
 	        
-	        Button btn_task9 = (Button) findViewById(R.id.btn_task9);
+	        btn_task9 = (Button) findViewById(R.id.btn_task9);
 	        btn_task9.setOnClickListener(this);
 	        btn_task9.setOnTouchListener(btnTouchTask9);
 	        btn_task9.setEnabled(false);
 	        
-	        Button btn_task10 = (Button) findViewById(R.id.btn_task10);
+	        btn_task10 = (Button) findViewById(R.id.btn_task10);
 	        btn_task10.setOnClickListener(this);
 	        btn_task10.setOnTouchListener(btnTouchTask10);
 	        btn_task10.setEnabled(false);
 	        
-	        Button btn_QoERating = (Button) findViewById(R.id.QoE);
+	        btn_QoERating = (Button) findViewById(R.id.QoE);
 	        btn_QoERating.setOnClickListener(this);
 	        btn_QoERating.setOnTouchListener(btnTouchTaskQoE);
-	        //btn_QoERating.setEnabled(false);
+	        btn_QoERating.setEnabled(false);
 	        
 	        
 	 	}
@@ -428,6 +492,130 @@ GestureDetector.OnDoubleTapListener{
 			super.onRestart();
 			Commons.currentTask = "List of tasks";
 		}
+		
+		//Disable back to previous activity
+		@Override
+		public void onBackPressed() {
+		}
+		
+		@Override
+		public void onResume(){
+			super.onResume();
+			activateCurrentTaskButton();
+			activateQoEButton();
+		} 
+		
+		
+		public void activateQoEButton(){ 
+		
+			if (Commons.activateQoE==true){
+				switch(Commons.counterTask){
+				case 1: btn_task1.setText(statusFinished);
+						btn_task1.setEnabled(false);
+						btn_QoERating.setEnabled(true);
+					break;
+				
+				case 2: btn_task2.setText(statusFinished);
+						btn_task2.setEnabled(false);
+						btn_QoERating.setEnabled(true);
+					break;
+				
+				case 3: btn_task3.setText(statusFinished);
+						btn_task3.setEnabled(false);
+						btn_QoERating.setEnabled(true);
+					break;
+					
+				case 4: btn_task4.setText(statusFinished);
+						btn_task4.setEnabled(false);
+						btn_QoERating.setEnabled(true);
+					break;
+					
+				case 5: btn_task5.setText(statusFinished);
+						btn_task5.setEnabled(false);
+						btn_QoERating.setEnabled(true);
+					break;
+					
+				case 6: btn_task6.setText(statusFinished);
+						btn_task6.setEnabled(false);
+						btn_QoERating.setEnabled(true);
+					break;	
+				
+				case 7: btn_task7.setText(statusFinished);
+						btn_task7.setEnabled(false);
+						btn_QoERating.setEnabled(true);
+					break;
+					
+				case 8: btn_task8.setText(statusFinished);
+						btn_task8.setEnabled(false);
+						btn_QoERating.setEnabled(true);
+					break;
+					
+				case 9: btn_task9.setText(statusFinished);
+						btn_task9.setEnabled(false);
+						btn_QoERating.setEnabled(true);
+					break;
+					
+					
+				case 10: btn_task10.setText(statusFinished);
+						btn_task10.setEnabled(false);
+						btn_QoERating.setEnabled(true);
+						break;
+				}
+			}else{
+				btn_QoERating.setEnabled(false);
+			}
+			
+			
+		}
+		
+		
+		public void activateCurrentTaskButton(){
+			switch(Commons.counterTask){
+			case 1: btn_task1.setEnabled(true);
+					
+				break;
+			
+			case 2: btn_task1.setEnabled(false);
+					btn_task2.setEnabled(true);
+				break;
+			
+			case 3: btn_task2.setEnabled(false);
+					btn_task3.setEnabled(true);
+				break;
+				
+			case 4: btn_task3.setEnabled(false);
+					btn_task4.setEnabled(true);
+				break;
+				
+			case 5: btn_task4.setEnabled(false);
+					btn_task5.setEnabled(true);
+				break;
+				
+			case 6: btn_task5.setEnabled(false);
+					btn_task6.setEnabled(true);
+				break;	
+			
+			case 7: btn_task6.setEnabled(false);
+					btn_task7.setEnabled(true);
+				break;
+				
+			case 8: btn_task7.setEnabled(false);
+					btn_task8.setEnabled(true);
+				break;
+				
+			case 9: btn_task8.setEnabled(false);
+					btn_task9.setEnabled(true);
+				break;
+				
+				
+			case 10:btn_task9.setEnabled(false);
+					btn_task10.setEnabled(true);
+					break;
+			}
+		}
+		
+		
+		
 		
 	 
 }

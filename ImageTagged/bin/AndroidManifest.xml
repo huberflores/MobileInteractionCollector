@@ -28,6 +28,11 @@
         </activity>
         
         <activity android:name="symlab.ust.hk.imagetagged.TasksActivity"></activity>
+        <activity android:name="symlab.ust.hk.imagetagged.ProcessTask"></activity>
+        <activity android:name="symlab.ust.hk.imagetagged.FaceDetectionView"></activity>
+        <activity android:name="symlab.ust.hk.imagetagged.QoEActivity"></activity>
+        
+        <service android:enabled="true" android:name="FaceDetectionTask"/>
         
         <provider
       		android:name=".contentprovider.MyTaskContentProvider"

@@ -3,6 +3,8 @@ package symlab.ust.hk.imagetagged;
 import java.io.File;
 import java.util.logging.Logger;
 
+import symlab.ust.hk.imagetagged.Utilities.Commons;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -55,14 +57,16 @@ public class FaceDetectionView extends Activity implements android.view.View.OnC
     
     @Override
 	public void onClick(View v) {
-		switch (v.getId()) {
+		switch (v.getId()) {   
 		
 			case R.id.finish_task: 
 			
-				 //dManager.saveData("Button - Enter", "Press/Release event", press, release);
-				 Intent intent = new Intent(getApplicationContext(), TasksActivity.class);
-				 //intent.putExtra("db", dbUri);
-		         startActivity(intent);       
+				 //dManager.saveData("Button - Enter", "Press/Release event", press, release); 	        	 
+		         Intent listOfTasks= new Intent(getApplicationContext(), TasksActivity.class);
+				 listOfTasks.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+				 startActivity(listOfTasks);
+				 finish();
+				 Commons.activateQoE = true;
 		        
 				break;	
 				
@@ -129,7 +133,10 @@ public class FaceDetectionView extends Activity implements android.view.View.OnC
     	}
     	
     }
-
-	
+    
+    
+    @Override
+	public void onBackPressed() {
+	}
 
 }

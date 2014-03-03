@@ -1,5 +1,6 @@
 package symlab.ust.hk.imagetagged;
 
+import symlab.ust.hk.imagetagged.Utilities.Commons;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -23,11 +24,11 @@ public class ProcessTask extends Activity implements android.view.View.OnClickLi
 	 private boolean buttonAction;
 	 MessageReceiver receiver;
 	 
-	 private String selectedImage;
+	 private String selectedImage; 
 		 
 	 
 	 @Override
-	 protected void onCreate(Bundle savedInstanceState) {
+	 protected void onCreate(Bundle savedInstanceState) { 
 	      super.onCreate(savedInstanceState);
 	      setContentView(R.layout.activity_process_task);
 	      
@@ -53,13 +54,19 @@ public class ProcessTask extends Activity implements android.view.View.OnClickLi
 			
 				case R.id.taskButton: 
 			
+					
 					if (buttonAction==false){
 						//Go back
+						Intent listOfTasks= new Intent(ProcessTask.this, TasksActivity.class);
+					    listOfTasks.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+					    startActivity(listOfTasks);
+						
 					}else{
 						//Go results
 						Intent intent = new Intent(getApplicationContext(), FaceDetectionView.class);
 						intent.putExtra("selectedImage", selectedImage);
 				        startActivity(intent);
+				        finish();
 
 					}
 				  
@@ -113,7 +120,7 @@ public class ProcessTask extends Activity implements android.view.View.OnClickLi
 	        filter = new IntentFilter(ProcessTask.taskStatusText);
 	        receiver = new MessageReceiver();
 	        registerReceiver(receiver, filter);
-
+	    
 	        super.onResume();
 	      }
 
@@ -122,5 +129,12 @@ public class ProcessTask extends Activity implements android.view.View.OnClickLi
 	        unregisterReceiver(receiver);
 	        super.onPause();
 	      }
+	      
+	    @Override
+		public void onBackPressed() {
+		}
 	    
+	    
+	    
+			    
 }

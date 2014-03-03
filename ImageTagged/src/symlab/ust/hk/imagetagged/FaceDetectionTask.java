@@ -4,10 +4,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import symlab.ust.hk.imagetagged.Utilities.Commons;
 
+import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -15,6 +17,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.FaceDetector;
 import android.net.Uri;
+import android.os.Handler;
 import android.os.IBinder;
 
 
@@ -30,8 +33,7 @@ public class FaceDetectionTask extends Service  {
     	private String selectedImage;
     	
     	private Logger Log = Logger.getLogger(ImageTagged.class.getName());
-    	
-    	
+    	    	
     	Thread Runningthread = null;
     	
     	private List<String> listOfImages = null;
@@ -41,11 +43,12 @@ public class FaceDetectionTask extends Service  {
 			
 		@Override
 		public int onStartCommand(Intent intent, int flags, int startId) {
-		  		      
-				Runningthread = new Thread(new RunningThread());
-				Runningthread.start();
-				
+			
+			Runningthread = new Thread(new RunningThread());
+			Runningthread.start();
+	
 		    return Service.START_STICKY;
+		    
 		 };
 		 
 		 
@@ -53,6 +56,7 @@ public class FaceDetectionTask extends Service  {
 
 			 @Override
 			 public void run() {
+				 experimentalDelay(10);
 				 startDetection(Commons.appPicturesPath);
 			 }
 		  };
@@ -75,7 +79,6 @@ public class FaceDetectionTask extends Service  {
 			
 			BitmapFactory.Options bitmapFatoryOptions=new BitmapFactory.Options();
 			bitmapFatoryOptions.inPreferredConfig=Bitmap.Config.RGB_565;
-			//myBitmap=BitmapFactory.decodeResource(getResources(), R.drawable.faceswapping,bitmapFatoryOptions);
 			
 			myBitmap = BitmapFactory.decodeFile(myFile.getAbsolutePath(), bitmapFatoryOptions);
 			width=myBitmap.getWidth();
@@ -83,7 +86,8 @@ public class FaceDetectionTask extends Service  {
 			detectedFaces=new FaceDetector.Face[numberOfFaces];
 			faceDetector=new FaceDetector(width,height,numberOfFaces);
 			numberOfFacesDetected=faceDetector.findFaces(myBitmap, detectedFaces);
-			           
+		
+			
 			notifyStatusChanged("Completed");
 		}
 		
@@ -94,10 +98,12 @@ public class FaceDetectionTask extends Service  {
 			 intent.putExtra("taskValue", true);
 			 intent.putExtra("taskStatusValue", status);
 			 intent.putExtra("selectedImage", selectedImage); 
-
+			 
+						 
 			 sendBroadcast(intent);
+			
 		  }
-		 
+		 	 
 		 
 		 private void getDir(String dirPath)
 		 {
@@ -120,8 +126,19 @@ public class FaceDetectionTask extends Service  {
 				   
 			 }
 
-			 
 		  }
+		 
+		 @SuppressLint("NewApi")
+		private void experimentalDelay(int time){
+
+			 try {
+				Random generator = new Random();
+				TimeUnit.SECONDS.sleep(generator.nextInt(time));
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}  
+		 }
 	
 }
 
