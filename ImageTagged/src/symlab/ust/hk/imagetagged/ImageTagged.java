@@ -86,7 +86,7 @@ GestureDetector.OnDoubleTapListener{
         mDetector = new GestureDetectorCompat(this,this);
         mDetector.setOnDoubleTapListener(this);
 
-        //extractDatabaseFile(new DatabaseCommons());
+        
     }
 
     @Override
@@ -118,16 +118,7 @@ GestureDetector.OnDoubleTapListener{
 		
 	}
 	
-	
-	public void extractDatabaseFile(DatabaseCommons db){			
-	   try { 
-		db.copyDatabaseFile();
-	   } catch (IOException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace(); 
-	   }
-	}
-	      
+		      
 	private View.OnTouchListener btnTouch = new View.OnTouchListener() {
 	    @Override
 	    public boolean onTouch(View v, MotionEvent event) {

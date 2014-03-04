@@ -39,7 +39,14 @@ public class ProcessTask extends Activity implements android.view.View.OnClickLi
 	    	  //pContext = this;
 	    	  initialLabels(extras.getString("taskName"));
 	    	  runTask();
-	       }
+	    	  
+	    	  boolean iscloud = extras.getBoolean("taskValue", false);
+		      if(iscloud){
+		         selectedImage = extras.getString("selectedImage");
+		         buttonAction = true;
+		      }
+	    	  
+	      }
 	      
 	 }      
 	 
@@ -62,7 +69,7 @@ public class ProcessTask extends Activity implements android.view.View.OnClickLi
 					    startActivity(listOfTasks);
 						
 					}else{
-						//Go results
+						//Go results						
 						Intent intent = new Intent(getApplicationContext(), FaceDetectionView.class);
 						intent.putExtra("selectedImage", selectedImage);
 				        startActivity(intent);
@@ -114,21 +121,42 @@ public class ProcessTask extends Activity implements android.view.View.OnClickLi
 	        }
 	      }
 	 	  
+	   
 	   @Override
-	   public void onResume() {
+	   protected void onNewIntent(Intent intent) {
+	       super.onNewIntent(intent);
+	       setIntent(intent);
+	   }
+	   
+	   @Override
+	   public void onResume() { 
 	        IntentFilter filter;
 	        filter = new IntentFilter(ProcessTask.taskStatusText);
 	        receiver = new MessageReceiver();
 	        registerReceiver(receiver, filter);
-	    
+	        
+	        Intent extras= getIntent();
+		      
+		      if (extras!=null){
+		    	  boolean iscloud = extras.getBooleanExtra("taskValue", false);
+			      if(iscloud){
+			         selectedImage = extras.getStringExtra("selectedImage"); 
+			         changeTaskStatus("Completed");
+			         buttonAction = true;
+			      } 
+		      } 
+	        
+	        
 	        super.onResume();
-	      }
+	
+	   
+	   } 
 
-	      @Override
-	      public void onPause() {
-	        unregisterReceiver(receiver);
-	        super.onPause();
-	      }
+      @Override
+      public void onPause() {
+    	  unregisterReceiver(receiver);
+	      super.onPause();
+	  }
 	      
 	    @Override
 		public void onBackPressed() {

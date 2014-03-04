@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 import symlab.ust.hk.imagetagged.Utilities.Commons;
 
 import android.annotation.SuppressLint;
+import android.app.ActivityManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -98,12 +99,12 @@ public class FaceDetectionTask extends Service  {
 			 intent.putExtra("taskValue", true);
 			 intent.putExtra("taskStatusValue", status);
 			 intent.putExtra("selectedImage", selectedImage); 
-			 
 						 
 			 sendBroadcast(intent);
 			
 		  }
-		 	 
+		 
+		 
 		 
 		 private void getDir(String dirPath)
 		 {

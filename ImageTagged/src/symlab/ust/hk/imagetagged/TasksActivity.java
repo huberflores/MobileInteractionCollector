@@ -1,13 +1,19 @@
 package symlab.ust.hk.imagetagged;
 
 
+import java.io.IOException;
 import java.util.logging.Logger;
 import symlab.ust.hk.imagetagged.R;
+import symlab.ust.hk.imagetagged.ProcessTask.MessageReceiver;
 import symlab.ust.hk.imagetagged.Utilities.Commons;
+import symlab.ust.hk.imagetagged.Utilities.DatabaseCommons;
 import symlab.ust.hk.imagetagged.contentprovider.MyTaskContentProvider;
 import symlab.ust.hk.imagetagged.data.DatabaseManager;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.GestureDetector;
@@ -30,6 +36,11 @@ GestureDetector.OnDoubleTapListener{
 	private GestureDetectorCompat mDetector;
 	
 	public static String statusFinished = "Finished";
+	public static String statusProcessing = "Processing...";
+	MessageReceiver receiver;
+	
+	private boolean isActive = false;
+	private String selectedImage; 
 	
 	Button btn_task1;
 	Button btn_task2;  
@@ -42,7 +53,9 @@ GestureDetector.OnDoubleTapListener{
 	Button btn_task9;
 	Button btn_task10;
 	Button btn_QoERating;
+	Button btn_extractDB;
 
+	
 	
 	 @Override
 	    public void onCreate(Bundle savedInstanceState) {
@@ -85,6 +98,12 @@ GestureDetector.OnDoubleTapListener{
 					 intent1.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 					 intent1.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 					 intent1.putExtra("taskName", "Task 1");
+					 if (isActive==true){
+						 intent1.putExtra("selectedImage", selectedImage);
+						 intent1.putExtra("taskValue", true);
+						 isActive=false;
+					 }
+					 
 					 startActivity(intent1);
 	
 					 
@@ -98,6 +117,13 @@ GestureDetector.OnDoubleTapListener{
 					 Intent intent2 = new Intent(getApplicationContext(), ProcessTask.class);
 					 intent2.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 					 intent2.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+					 
+					 if (isActive==true){
+						 intent2.putExtra("selectedImage", selectedImage);
+						 intent2.putExtra("taskValue", true);
+						 isActive=false;
+					 }
+					 
 					 intent2.putExtra("taskName", "Task 2");
 					 startActivity(intent2);
 	
@@ -110,6 +136,13 @@ GestureDetector.OnDoubleTapListener{
 					 Intent intent3 = new Intent(getApplicationContext(), ProcessTask.class);
 					 intent3.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 					 intent3.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+					 
+					 if (isActive==true){
+						 intent3.putExtra("selectedImage", selectedImage);
+						 intent3.putExtra("taskValue", true);
+						 isActive=false;
+					 }
+					 
 					 intent3.putExtra("taskName", "Task 3");
 					 startActivity(intent3);
 					 
@@ -122,6 +155,13 @@ GestureDetector.OnDoubleTapListener{
 					 Intent intent4 = new Intent(getApplicationContext(), ProcessTask.class);
 					 intent4.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 					 intent4.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+					 
+					 if (isActive==true){
+						 intent4.putExtra("selectedImage", selectedImage);
+						 intent4.putExtra("taskValue", true);
+						 isActive=false;
+					 }
+					 
 					 intent4.putExtra("taskName", "Task 4");
 					 startActivity(intent4);
 			        
@@ -133,6 +173,13 @@ GestureDetector.OnDoubleTapListener{
 					 Intent intent5 = new Intent(getApplicationContext(), ProcessTask.class);
 					 intent5.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 					 intent5.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+					 
+					 if (isActive==true){
+						 intent5.putExtra("selectedImage", selectedImage);
+						 intent5.putExtra("taskValue", true);
+						 isActive=false;
+					 }
+					 
 					 intent5.putExtra("taskName", "Task 5");
 					 startActivity(intent5);
 			        
@@ -144,6 +191,13 @@ GestureDetector.OnDoubleTapListener{
 					 Intent intent6 = new Intent(getApplicationContext(), ProcessTask.class);
 					 intent6.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 					 intent6.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+					 
+					 if (isActive==true){
+						 intent6.putExtra("selectedImage", selectedImage);
+						 intent6.putExtra("taskValue", true);
+						 isActive=false;
+					 }
+					 
 					 intent6.putExtra("taskName", "Task 6");
 					 startActivity(intent6);
 			        
@@ -155,6 +209,13 @@ GestureDetector.OnDoubleTapListener{
 					 Intent intent7 = new Intent(getApplicationContext(), ProcessTask.class);
 					 intent7.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 					 intent7.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+					 
+					 if (isActive==true){
+						 intent7.putExtra("selectedImage", selectedImage);
+						 intent7.putExtra("taskValue", true);
+						 isActive=false;
+					 }
+					 
 					 intent7.putExtra("taskName", "Task 7");
 					 startActivity(intent7);
 			        
@@ -166,6 +227,13 @@ GestureDetector.OnDoubleTapListener{
 					 Intent intent8 = new Intent(getApplicationContext(), ProcessTask.class);
 					 intent8.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 					 intent8.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+					 
+					 if (isActive==true){
+						 intent8.putExtra("selectedImage", selectedImage);
+						 intent8.putExtra("taskValue", true);
+						 isActive=false;
+					 }
+					 
 					 intent8.putExtra("taskName", "Task 8");
 					 startActivity(intent8);
 			        
@@ -177,6 +245,13 @@ GestureDetector.OnDoubleTapListener{
 					 Intent intent9 = new Intent(getApplicationContext(), ProcessTask.class);
 					 intent9.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 					 intent9.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+					 
+					 if (isActive==true){
+						 intent9.putExtra("selectedImage", selectedImage);
+						 intent9.putExtra("taskValue", true);
+						 isActive=false;
+					 }
+					 
 					 intent9.putExtra("taskName", "Task 9");
 					 startActivity(intent9);
 			        
@@ -188,6 +263,13 @@ GestureDetector.OnDoubleTapListener{
 					 Intent intent10 = new Intent(getApplicationContext(), ProcessTask.class);
 					 intent10.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 					 intent10.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+					 
+					 if (isActive==true){
+						 intent10.putExtra("selectedImage", selectedImage);
+						 intent10.putExtra("taskValue", true);
+						 isActive=false;
+					 }
+					 
 					 intent10.putExtra("taskName", "Task 10");
 					 startActivity(intent10);
 			        
@@ -202,6 +284,11 @@ GestureDetector.OnDoubleTapListener{
 			         startActivity(intentQoE);
 					 
 					
+					break;
+					
+				case R.id.btn_sendDatabase:
+					extractDatabaseFile(new DatabaseCommons());
+					finish();
 					break;
 					
 				
@@ -264,6 +351,12 @@ GestureDetector.OnDoubleTapListener{
 	        btn_QoERating.setOnClickListener(this);
 	        btn_QoERating.setOnTouchListener(btnTouchTaskQoE);
 	        btn_QoERating.setEnabled(false);
+	        
+	        btn_extractDB = (Button) findViewById(R.id.btn_sendDatabase);
+	        btn_extractDB.setOnClickListener(this);
+	        btn_extractDB.setOnTouchListener(btnTouchDB);
+	        btn_extractDB.setEnabled(false);
+	        
 	        
 	        
 	 	}
@@ -406,6 +499,18 @@ GestureDetector.OnDoubleTapListener{
 			         return false;   
 			      }
 		  };
+		  
+		  private View.OnTouchListener btnTouchDB = new View.OnTouchListener() {
+			    @Override
+			    public boolean onTouch(View v, MotionEvent event) {
+			         int action = event.getAction();
+			         if (action == MotionEvent.ACTION_DOWN)
+			       	   press = System.currentTimeMillis();
+			         else if (action == MotionEvent.ACTION_UP)
+			           release = System.currentTimeMillis();
+			         return false;   
+			      }
+		  };
 		 
 		   //Gesture events
 		@Override 
@@ -500,10 +605,23 @@ GestureDetector.OnDoubleTapListener{
 		
 		@Override
 		public void onResume(){
+			IntentFilter filter;
+		    filter = new IntentFilter(ProcessTask.taskStatusText);
+		    receiver = new MessageReceiver();
+		    registerReceiver(receiver, filter);
+		    
+			
 			super.onResume();
 			activateCurrentTaskButton();
 			activateQoEButton();
-		} 
+		}
+		
+		
+		@Override
+		public void onPause() {
+		    unregisterReceiver(receiver);
+		    super.onPause();
+		}
 		
 		
 		public void activateQoEButton(){ 
@@ -610,11 +728,41 @@ GestureDetector.OnDoubleTapListener{
 				
 			case 10:btn_task9.setEnabled(false);
 					btn_task10.setEnabled(true);
-					break;
+				break;
+			
+			case 11:btn_task10.setEnabled(false); 
+					btn_extractDB.setEnabled(true);
+				break;
+			
 			}
 		}
 		
 		
+		public class MessageReceiver extends BroadcastReceiver {
+	        @Override
+	        public void onReceive(Context context, Intent intent) {
+	         isActive = true;
+	         boolean iscloud = intent.getBooleanExtra("taskValue", false);
+	         if(iscloud){
+	         selectedImage = intent.getStringExtra("selectedImage");
+	         }
+	         
+	         try {
+	                Uri notification = android.media.RingtoneManager.getDefaultUri(android.media.RingtoneManager.TYPE_NOTIFICATION);
+	                android.media.Ringtone r = android.media.RingtoneManager.getRingtone(getApplicationContext(), notification);
+	                r.play();
+	            } catch (Exception e) {}
+	        }
+	      }
+	 	
+		public void extractDatabaseFile(DatabaseCommons db){			
+			   try { 
+				db.copyDatabaseFile();
+			   } catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace(); 
+			   }
+		}
 		
 		
 	 
