@@ -39,6 +39,16 @@ public class DatabaseManager {
 	}
 	
 	
+	public void saveData(double rating){
+		ContentValues values = new ContentValues();
+		values.put(TaskQoEDescriptor.COLUMN_CURRENT_TASK_NAME, "Task: " + Commons.counterTask);
+		values.put(TaskQoEDescriptor.COLUMN_TASK_QOE_RATING, rating);
+		 	
+		switchAuthority(values, "qoe");	
+		
+	}
+	
+	
 	public void switchAuthority(ContentValues values, String authority){
 		
 		if (authority.equals("task")){
@@ -46,6 +56,10 @@ public class DatabaseManager {
 		}else{
 			if (authority.equals("tap")){
 				dbUri = dContext.getContentResolver().insert(MyTaskContentProvider.CONTENT_URI_TAPS, values);
+			}else{
+				if (authority.equals("qoe")){
+					dbUri = dContext.getContentResolver().insert(MyTaskContentProvider.CONTENT_URI_QOES, values);
+				}
 			}
 		}
 		

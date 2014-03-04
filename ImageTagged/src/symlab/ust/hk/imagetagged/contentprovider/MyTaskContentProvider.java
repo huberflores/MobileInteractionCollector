@@ -6,6 +6,7 @@ import java.util.HashSet;
 import symlab.ust.hk.imagetagged.data.TapScreenDescriptor;
 import symlab.ust.hk.imagetagged.data.TaskDatabaseHelper;
 import symlab.ust.hk.imagetagged.data.TaskDescriptor;
+import symlab.ust.hk.imagetagged.data.TaskQoEDescriptor;
 import android.content.ContentProvider;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -32,6 +33,11 @@ public class MyTaskContentProvider extends ContentProvider {
 	private static final String BASE_TAPS = "taps";
 	public static final Uri CONTENT_URI_TAPS = Uri.parse("content://"+ AUTHORITY
 		      + "/" + BASE_TAPS); 
+	
+	//Table that collects QoE
+	private static String BASE_QOES = "qoes";
+	public static final Uri CONTENT_URI_QOES = Uri.parse("content://"+ AUTHORITY
+		      + "/" + BASE_QOES);
 
 	
 	//Used by tasks
@@ -55,6 +61,18 @@ public class MyTaskContentProvider extends ContentProvider {
 	private static final int TAPS = 30;
 	private static final int TAP_ID = 40;
 	
+	//Used by qoes
+	public static final String CONTENT_TYPE_QOES = ContentResolver.CURSOR_DIR_BASE_TYPE
+		      + "/qoes";
+		
+		public static final String CONTENT_ITEM_TYPE_QOES = ContentResolver.CURSOR_ITEM_BASE_TYPE
+		      + "/qoe";
+		
+	
+	private static final int QOES = 50;
+	private static final int QOE_ID = 60;
+	
+	
 	
 	private static final UriMatcher sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 	  static {
@@ -62,6 +80,8 @@ public class MyTaskContentProvider extends ContentProvider {
 	    sURIMatcher.addURI(AUTHORITY, BASE_PATH + "/#", TASK_ID);
 	    sURIMatcher.addURI(AUTHORITY, BASE_TAPS, TAPS);
 	    sURIMatcher.addURI(AUTHORITY, BASE_TAPS + "/#", TAP_ID);
+	    sURIMatcher.addURI(AUTHORITY, BASE_QOES, QOES);
+	    sURIMatcher.addURI(AUTHORITY, BASE_QOES + "/#", QOE_ID);
 	  }
 		  
 	
@@ -84,6 +104,10 @@ public class MyTaskContentProvider extends ContentProvider {
 		  
 		case TAPS:
 			id = sqlDB.insert(TapScreenDescriptor.TABLE_TAP, null, values);
+		  break;
+		  
+		case QOES:
+			id = sqlDB.insert(TaskQoEDescriptor.TABLE_QOE, null, values);
 		  break;
 		default:
 		  throw new IllegalArgumentException("Unknown URI: " + uri);
@@ -127,7 +151,16 @@ public class MyTaskContentProvider extends ContentProvider {
 			  queryBuilder.appendWhere(TapScreenDescriptor.COLUMN_TAP_ID + "="
 				      + uri.getLastPathSegment());
 			break;
-				  
+		
+		case QOES:
+			queryBuilder.setTables(TaskQoEDescriptor.TABLE_QOE);
+			break;
+		
+		case QOE_ID:
+			  queryBuilder.appendWhere(TaskQoEDescriptor.COLUMN_TASK_ID + "="
+				      + uri.getLastPathSegment());
+			break;
+		
 		  
 		default:
 		  throw new IllegalArgumentException("Unknown URI: " + uri);
@@ -225,7 +258,33 @@ public class MyTaskContentProvider extends ContentProvider {
 		            selectionArgs);
 		      }
 		      break;
-	      
+	   
+	    case QOES:
+	    	rowsUpdated = sqlDB.update(TapScreenDescriptor.TABLE_TAP, 
+	  	          values, 
+	  	          selection,
+	  	          selectionArgs);	    	
+	    	break;
+	    
+	    case QOE_ID:
+	    	String idqoe = uri.getLastPathSegment();
+		      if (TextUtils.isEmpty(selection)) {
+		        rowsUpdated = sqlDB.update(TaskQoEDescriptor.TABLE_QOE, 
+		            values,
+		            TaskQoEDescriptor.COLUMN_TASK_ID + "=" + idqoe, 
+		            null);
+		      } else {
+		        rowsUpdated = sqlDB.update(TapScreenDescriptor.TABLE_TAP, 
+		            values,
+		            TaskQoEDescriptor.COLUMN_TASK_ID + "=" + idqoe 
+		            + " and " 
+		            + selection,
+		            selectionArgs);
+		      }
+		      break;
+	   
+		      
+		      
 	    default:
 	      throw new IllegalArgumentException("Unknown URI: " + uri);
 	    }

@@ -16,6 +16,11 @@ public class DatabaseCommons {
 	private static final String fileName = "perception-data.db";
 	
 	private String absoluteFilePath;
+	private String userMood;
+	
+	public DatabaseCommons(String um){
+		this.userMood = um;
+	}
 	
 	public void copyDatabaseFile() throws IOException{
 		absoluteFilePath = "/data/data/" + app_package + "/databases/" + fileName;
@@ -23,7 +28,7 @@ public class DatabaseCommons {
 	     InputStream myInput = new FileInputStream(absoluteFilePath);
 	     Calendar calendar = Calendar.getInstance();
 	    
-	     this.outFileName = "/sdcard/" + fileName + calendar.getTimeInMillis()+".sql";
+	     this.outFileName = "/sdcard/" + userMood + fileName + calendar.getTimeInMillis()+".sql";
 	      OutputStream myOutput = new FileOutputStream(outFileName);
 	      byte[] buffer = new byte[1024];
 	     int length;

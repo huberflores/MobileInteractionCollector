@@ -15,8 +15,13 @@ import symlab.ust.hk.imagetagged.Utilities.Commons;
 import symlab.ust.hk.imagetagged.Utilities.DatabaseCommons;
 import symlab.ust.hk.imagetagged.data.DatabaseManager;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
@@ -45,6 +50,8 @@ GestureDetector.OnDoubleTapListener{
     private GestureDetectorCompat mDetector;
     
     private DatabaseManager dManager;
+    
+    private String userMood = "Default";
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +82,7 @@ GestureDetector.OnDoubleTapListener{
         if (listOfImages.size() > 0){
         	
         }else{
-        	btn_start.setEnabled(false);
+        	btn_start.setEnabled(false); 
         }
         
         
@@ -87,7 +94,39 @@ GestureDetector.OnDoubleTapListener{
         mDetector.setOnDoubleTapListener(this);
 
         
+		getMood();
+		extractDatabaseFile(new DatabaseCommons(userMood + "_"));
+		
+        
     }
+    
+    
+    public void extractDatabaseFile(DatabaseCommons db){			
+		   try { 
+			db.copyDatabaseFile();
+		   } catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace(); 
+		   }
+	}
+    
+    public void getMood(){
+		final CharSequence states[] = new CharSequence[] {"Normal", "Emotional"};
+		
+
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Personal state");
+		builder.setItems(states, new DialogInterface.OnClickListener() {
+		    @Override
+		    public void onClick(DialogInterface dialog, int which) {
+		        userMood = states[which].toString();
+		    }
+		});
+		builder.create().show();
+		
+		
+	}
+	
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -206,11 +245,28 @@ GestureDetector.OnDoubleTapListener{
 	//Camera
 	@Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		 ContentValues values = new ContentValues();
+         values.put(MediaStore.Images.Media.TITLE, "New Picture");
+         values.put(MediaStore.Images.Media.DESCRIPTION, "From your Camera");
+         Uri imageUri = getContentResolver().insert(
+                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+         intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+		
             super.onActivityResult(requestCode, resultCode, data);
-     
-            if(TAKE_PICTURE_CODE == requestCode){
-                    processCameraImage(data);
+         
+            if(TAKE_PICTURE_CODE == requestCode){  
+                    processCameraImage(data, imageUri);
             }
+    }
+	
+	public String getRealPathFromURI(Uri contentUri) {
+        String[] proj = { MediaStore.Images.Media.DATA };
+        Cursor cursor = managedQuery(contentUri, proj, null, null, null);
+        int column_index = cursor
+                .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        return cursor.getString(column_index);
     }
  
 	private void openCamera(){
@@ -219,13 +275,14 @@ GestureDetector.OnDoubleTapListener{
 		startActivityForResult(intent, TAKE_PICTURE_CODE);
 	}
 	
-	private void processCameraImage(Intent intent){
+	private void processCameraImage(Intent intent, Uri imageUri){
 	    
-	     
-	    Bitmap rawBitmap = (Bitmap)intent.getExtras().get("data");
+	    String imageUrl =getRealPathFromURI(imageUri); 
+	    
+	    Bitmap rawBitmap = (Bitmap) intent.getExtras().get("data");
 
 	    ByteArrayOutputStream bos = new ByteArrayOutputStream(); 
-	    rawBitmap.compress(CompressFormat.PNG, 0 /*ignored for PNG*/, bos); 
+	    rawBitmap.compress(CompressFormat.PNG, 0, bos); 
 	    byte[] bitmapdata = bos.toByteArray();
 	    ByteArrayInputStream bs = new ByteArrayInputStream(bitmapdata);
 	   

@@ -20,61 +20,56 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checked="true"
-            android:text="1" />
+            android:text="9 - Excellent" />
 
         <RadioButton
             android:id="@+id/radio1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="2" />
+            android:text="8" />
 
         <RadioButton
             android:id="@+id/radio2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="3" />
+            android:text="7 - Good" />
 
         <RadioButton
             android:id="@+id/radio3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="4" />
+            android:text="6" />
 
         <RadioButton
             android:id="@+id/radio4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="5" />
+            android:text="5 - Sufficient" />
 
         <RadioButton
             android:id="@+id/radio5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="6" />
+            android:text="4" />
 
         <RadioButton
             android:id="@+id/radio6"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="7" />
+            android:text="3 - Bad" />
 
         <RadioButton
             android:id="@+id/radio7"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="8" />
+            android:text="2" />
 
         <RadioButton
             android:id="@+id/radio8"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="9" />
+            android:text="1 - Unacceptable" />
 
-        <RadioButton
-            android:id="@+id/radio9"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="10" />
     </RadioGroup>
     <Button android:id="@+id/btn_QoEPicture" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_below="@+id/radioGroupQoE" android:layout_centerHorizontal="true" android:layout_marginTop="32dp" android:text="Provide your photo"/>
     <Button android:id="@+id/btn_submitQoE" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_below="@+id/btn_QoEPicture" android:layout_centerHorizontal="true" android:text="Submit QoE"/>

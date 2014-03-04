@@ -10,8 +10,10 @@ import symlab.ust.hk.imagetagged.Utilities.DatabaseCommons;
 import symlab.ust.hk.imagetagged.contentprovider.MyTaskContentProvider;
 import symlab.ust.hk.imagetagged.data.DatabaseManager;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
@@ -287,7 +289,11 @@ GestureDetector.OnDoubleTapListener{
 					break;
 					
 				case R.id.btn_sendDatabase:
-					extractDatabaseFile(new DatabaseCommons());
+					String userMood = getMood();
+					if (userMood==null){
+						userMood = "default";
+					}
+					extractDatabaseFile(new DatabaseCommons(userMood + "_"));
 					finish();
 					break;
 					
@@ -582,7 +588,7 @@ GestureDetector.OnDoubleTapListener{
 		   	//Log.info("onSingleTapConfirmed: " + event.toString());
 		   	
 		 return true;
-		}
+		} 
 
 	 
 		//Lifecycle activity management
@@ -763,6 +769,25 @@ GestureDetector.OnDoubleTapListener{
 				e.printStackTrace(); 
 			   }
 		}
+		
+		public String getMood(){
+			final CharSequence states[] = new CharSequence[] {"Normal", "Emotional"};
+			String selectedState = null;
+
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle("Pick a color");
+			builder.setItems(states, new DialogInterface.OnClickListener() {
+			    @Override
+			    public void onClick(DialogInterface dialog, int which) {
+			        String selectedState = states[which].toString();
+			    }
+			});
+			builder.create().show();
+			return selectedState;
+			
+			
+		}
+
 		
 		
 	 
