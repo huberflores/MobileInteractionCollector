@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 import symlab.ust.hk.imagetagged.data.TapScreenDescriptor;
+import symlab.ust.hk.imagetagged.data.TaskComputationalDescriptor;
 import symlab.ust.hk.imagetagged.data.TaskDatabaseHelper;
 import symlab.ust.hk.imagetagged.data.TaskDescriptor;
 import symlab.ust.hk.imagetagged.data.TaskQoEDescriptor;
@@ -40,6 +41,13 @@ public class MyTaskContentProvider extends ContentProvider {
 		      + "/" + BASE_QOES);
 
 	
+	//Table that collects computatinal properties of the task
+	private static String BASE_COMPUTATIONALS = "computationals";
+	public static final Uri CONTENT_URI_COMPUTATIONALS = Uri.parse("content://"+ AUTHORITY
+			      + "/" + BASE_COMPUTATIONALS);
+
+	
+	
 	//Used by tasks
 	public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE
 	      + "/tasks";
@@ -72,6 +80,17 @@ public class MyTaskContentProvider extends ContentProvider {
 	private static final int QOES = 50;
 	private static final int QOE_ID = 60;
 	
+	//Used by computationals
+		public static final String CONTENT_TYPE_COMPUTATIONAL = ContentResolver.CURSOR_DIR_BASE_TYPE
+		      + "/computationals";
+		
+		public static final String CONTENT_ITEM_TYPE_COMPUTATIONAL = ContentResolver.CURSOR_ITEM_BASE_TYPE
+		      + "/computational";
+		
+		private static final int COMPUTATIONALS = 70;
+		private static final int TASK_COMPUTATIONAL = 80;
+		
+	
 	
 	
 	private static final UriMatcher sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -82,6 +101,8 @@ public class MyTaskContentProvider extends ContentProvider {
 	    sURIMatcher.addURI(AUTHORITY, BASE_TAPS + "/#", TAP_ID);
 	    sURIMatcher.addURI(AUTHORITY, BASE_QOES, QOES);
 	    sURIMatcher.addURI(AUTHORITY, BASE_QOES + "/#", QOE_ID);
+	    sURIMatcher.addURI(AUTHORITY, BASE_COMPUTATIONALS, COMPUTATIONALS);
+	    sURIMatcher.addURI(AUTHORITY, BASE_COMPUTATIONALS + "/#", TASK_COMPUTATIONAL);
 	  }
 		  
 	
@@ -109,6 +130,11 @@ public class MyTaskContentProvider extends ContentProvider {
 		case QOES:
 			id = sqlDB.insert(TaskQoEDescriptor.TABLE_QOE, null, values);
 		  break;
+		  
+		case COMPUTATIONALS:
+			id = sqlDB.insert(TaskComputationalDescriptor.TABLE_COMPUTATIONAL, null, values);
+		  break;
+		  
 		default:
 		  throw new IllegalArgumentException("Unknown URI: " + uri);
 		}
@@ -161,6 +187,14 @@ public class MyTaskContentProvider extends ContentProvider {
 				      + uri.getLastPathSegment());
 			break;
 		
+		case COMPUTATIONALS:
+			queryBuilder.setTables(TaskComputationalDescriptor.TABLE_COMPUTATIONAL);
+			break;
+		
+		case TASK_COMPUTATIONAL:
+			  queryBuilder.appendWhere(TaskComputationalDescriptor.COLUMN_TASK_ID + "="
+				      + uri.getLastPathSegment());
+			break;
 		  
 		default:
 		  throw new IllegalArgumentException("Unknown URI: " + uri);
@@ -247,12 +281,12 @@ public class MyTaskContentProvider extends ContentProvider {
 		      if (TextUtils.isEmpty(selection)) {
 		        rowsUpdated = sqlDB.update(TapScreenDescriptor.TABLE_TAP, 
 		            values,
-		            TaskDescriptor.COLUMN_TASK_ID + "=" + idtap, 
+		            TapScreenDescriptor.COLUMN_TAP_ID + "=" + idtap, 
 		            null);
 		      } else {
 		        rowsUpdated = sqlDB.update(TapScreenDescriptor.TABLE_TAP, 
 		            values,
-		            TaskDescriptor.COLUMN_TASK_ID + "=" + idtap 
+		            TapScreenDescriptor.COLUMN_TAP_ID + "=" + idtap 
 		            + " and " 
 		            + selection,
 		            selectionArgs);
@@ -260,7 +294,7 @@ public class MyTaskContentProvider extends ContentProvider {
 		      break;
 	   
 	    case QOES:
-	    	rowsUpdated = sqlDB.update(TapScreenDescriptor.TABLE_TAP, 
+	    	rowsUpdated = sqlDB.update(TaskQoEDescriptor.TABLE_QOE, 
 	  	          values, 
 	  	          selection,
 	  	          selectionArgs);	    	
@@ -274,7 +308,7 @@ public class MyTaskContentProvider extends ContentProvider {
 		            TaskQoEDescriptor.COLUMN_TASK_ID + "=" + idqoe, 
 		            null);
 		      } else {
-		        rowsUpdated = sqlDB.update(TapScreenDescriptor.TABLE_TAP, 
+		        rowsUpdated = sqlDB.update(TaskQoEDescriptor.TABLE_QOE, 
 		            values,
 		            TaskQoEDescriptor.COLUMN_TASK_ID + "=" + idqoe 
 		            + " and " 
@@ -283,7 +317,30 @@ public class MyTaskContentProvider extends ContentProvider {
 		      }
 		      break;
 	   
-		      
+	    case COMPUTATIONALS:
+	    	rowsUpdated = sqlDB.update(TaskComputationalDescriptor.TABLE_COMPUTATIONAL, 
+	  	          values, 
+	  	          selection,
+	  	          selectionArgs);	    	
+	    	break;
+	    
+	    case TASK_COMPUTATIONAL:
+	    	String idcom = uri.getLastPathSegment();
+		      if (TextUtils.isEmpty(selection)) {
+		        rowsUpdated = sqlDB.update(TaskComputationalDescriptor.TABLE_COMPUTATIONAL, 
+		            values,
+		            TaskComputationalDescriptor.COLUMN_TASK_ID + "=" + idcom, 
+		            null);
+		      } else {
+		        rowsUpdated = sqlDB.update(TaskComputationalDescriptor.TABLE_COMPUTATIONAL, 
+		            values,
+		            TaskComputationalDescriptor.COLUMN_TASK_ID + "=" + idcom 
+		            + " and " 
+		            + selection,
+		            selectionArgs);
+		      }
+		      break;
+	         
 		      
 	    default:
 	      throw new IllegalArgumentException("Unknown URI: " + uri);

@@ -108,7 +108,7 @@ GestureDetector.OnDoubleTapListener {
 	 
 	 public void initialLabels(String t){
 		  taskState = (Button) findViewById(R.id.taskButton);
-		  taskState.setText("Go Back!");
+		  taskState.setText("Go Back and check later!");
 		  taskState.setOnClickListener(this);
 		  taskState.setOnTouchListener(btnTouchState);
 		  

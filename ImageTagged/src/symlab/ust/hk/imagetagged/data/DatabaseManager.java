@@ -48,6 +48,17 @@ public class DatabaseManager {
 		
 	}
 	
+	public void saveData(double startTime, double endTime, double addedDelay){
+		ContentValues values = new ContentValues();
+		values.put(TaskComputationalDescriptor.COLUMN_CURRENT_TASK_NAME, "Task: " + Commons.counterTask);
+		values.put(TaskComputationalDescriptor.COLUMN_START_TIME, startTime);
+		values.put(TaskComputationalDescriptor.COLUMN_END_TIME, endTime);
+		values.put(TaskComputationalDescriptor.COLUMN_START_TIME, addedDelay);
+		 	
+		switchAuthority(values, "computational");	
+		
+	}
+	
 	
 	public void switchAuthority(ContentValues values, String authority){
 		
@@ -59,6 +70,10 @@ public class DatabaseManager {
 			}else{
 				if (authority.equals("qoe")){
 					dbUri = dContext.getContentResolver().insert(MyTaskContentProvider.CONTENT_URI_QOES, values);
+				}else{
+					if (authority.equals("computational")){
+						dbUri = dContext.getContentResolver().insert(MyTaskContentProvider.CONTENT_URI_COMPUTATIONALS, values);
+					}
 				}
 			}
 		}

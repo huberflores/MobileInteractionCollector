@@ -79,19 +79,25 @@ GestureDetector.OnDoubleTapListener{
         
     }
     
+    
+    
     @Override
 	public void onClick(View v) {
 		switch (v.getId()) {   
 		
 			case R.id.finish_task: 
 			
-				 dManager.saveData("Button - FinishTask", "Press/Release event", press, release); 	        	 
+				 dManager.saveData("Button - FinishTask", "Press/Release event", press, release);
+				 
+				 dManager.saveData(Commons.computationalTimeStart, Commons.computationalTimeEnd, Commons.addedDelay);
+				 
 		         Intent listOfTasks= new Intent(getApplicationContext(), TasksActivity.class);
 				 listOfTasks.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 				 startActivity(listOfTasks);
 				 finish();
 				 Commons.activateQoE = true;
-		        
+		   
+				 
 				break;	
 				
 			

@@ -23,6 +23,7 @@ public class TaskDatabaseHelper extends SQLiteOpenHelper {
 		TaskDescriptor.onCreate(db);
 		TapScreenDescriptor.onCreate(db);
 		TaskQoEDescriptor.onCreate(db);
+		TaskComputationalDescriptor.onCreate(db);
 	}
 
 	@Override

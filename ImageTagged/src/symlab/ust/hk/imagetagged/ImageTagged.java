@@ -12,11 +12,14 @@ import java.util.logging.Logger;
 
 import symlab.ust.hk.imagetagged.R;
 import symlab.ust.hk.imagetagged.Utilities.Commons;
+import symlab.ust.hk.imagetagged.Utilities.DatabaseCommons;
 import symlab.ust.hk.imagetagged.data.DatabaseManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -42,7 +45,7 @@ GestureDetector.OnDoubleTapListener{
 	private double release = 0f;
 	
 	private List<String> listOfImages = null;
-	private String root="/";
+	private String root="/"; 
 	
     private GestureDetectorCompat mDetector;
     
@@ -86,9 +89,40 @@ GestureDetector.OnDoubleTapListener{
     	
         mDetector = new GestureDetectorCompat(this,this);
         mDetector.setOnDoubleTapListener(this);
-
         
+       // getMoodAndDatabase();
     }
+    
+    
+    public void getMoodAndDatabase(){ 
+		final CharSequence states[] = new CharSequence[] {"Normal", "Affective"};
+	
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Thank you!, your emotional state");
+		builder.setItems(states, new DialogInterface.OnClickListener() {
+		    @Override
+		    public void onClick(DialogInterface dialog, int which) {
+		        userMood = states[which].toString();
+		        extractDatabaseFile(new DatabaseCommons(userMood + "_"));
+		        finish();
+		        
+
+		    }
+		});
+		builder.create().show();
+		
+		
+	}
+    
+    public void extractDatabaseFile(DatabaseCommons db){			
+		   try { 
+			db.copyDatabaseFile();
+		   } catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace(); 
+		   }
+	}
+
 	
 
     @Override
@@ -107,6 +141,7 @@ GestureDetector.OnDoubleTapListener{
 				 dManager.saveData("Button - Enter", "Press/Release event", press, release);
 				 Intent intent = new Intent(getApplicationContext(), TasksActivity.class);
 				 intent.putExtra("db", dbUri);
+				 finish();
 		         startActivity(intent);       
 		        
 				break;	
@@ -303,9 +338,7 @@ GestureDetector.OnDoubleTapListener{
 	    {  
 	        e.printStackTrace(); 
 	    } 
-	    
 
-		
 		
 	}
 	
@@ -394,6 +427,7 @@ GestureDetector.OnDoubleTapListener{
 		super.onResume();
 		getDir(Commons.appPicturesPath);
 		checkDirPictures();
+		restartVariables();
 	}
 	
 	public void checkDirPictures(){
@@ -403,6 +437,14 @@ GestureDetector.OnDoubleTapListener{
         	btn_start.setEnabled(false); 
         }
         
+	}
+	
+	
+	public void restartVariables(){
+
+		Commons.counterTask = 1;
+		Commons.activateQoE = false;
+		
 	}
 
 }

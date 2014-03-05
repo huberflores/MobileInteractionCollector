@@ -291,23 +291,25 @@ GestureDetector.OnDoubleTapListener{
 				case R.id.btn_sendDatabase:
 						getMoodAndDatabase();
 					break;
-					
+					 
 				
 			}		
 			
 		}
     	
-        public void getMoodAndDatabase(){
-    		final CharSequence states[] = new CharSequence[] {"Normal", "Emotional"};
+        public void getMoodAndDatabase(){ 
+    		final CharSequence states[] = new CharSequence[] {"Normal", "Affective"};
     	
     		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-    		builder.setTitle("Personal state");
+    		builder.setTitle("Thank you!, your emotional state");
     		builder.setItems(states, new DialogInterface.OnClickListener() {
     		    @Override
     		    public void onClick(DialogInterface dialog, int which) {
     		        userMood = states[which].toString();
     		        extractDatabaseFile(new DatabaseCommons(userMood + "_"));
     		        finish();
+    		        
+
     		    }
     		});
     		builder.create().show();
@@ -781,23 +783,12 @@ GestureDetector.OnDoubleTapListener{
 				e.printStackTrace(); 
 			   }
 		}
+	
 		
-		public String getMood(){
-			final CharSequence states[] = new CharSequence[] {"Normal", "Emotional"};
-			String selectedState = null;
-
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setTitle("Pick a color");
-			builder.setItems(states, new DialogInterface.OnClickListener() {
-			    @Override
-			    public void onClick(DialogInterface dialog, int which) {
-			        String selectedState = states[which].toString();
-			    }
-			});
-			builder.create().show();
-			return selectedState;
-			
-			
+		@Override
+		protected void onDestroy(){
+			android.os.Process.killProcess(android.os.Process.myPid());
+			super.onDestroy();
 		}
 
 		

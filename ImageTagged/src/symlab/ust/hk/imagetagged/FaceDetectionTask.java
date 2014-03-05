@@ -58,7 +58,9 @@ public class FaceDetectionTask extends Service  {
 			 @Override
 			 public void run() {
 				 experimentalDelay(10);
+				 Commons.computationalTimeStart = System.currentTimeMillis();
 				 startDetection(Commons.appPicturesPath);
+				 Commons.computationalTimeEnd = System.currentTimeMillis();
 			 }
 		  };
 		  
@@ -134,7 +136,8 @@ public class FaceDetectionTask extends Service  {
 
 			 try {
 				Random generator = new Random();
-				TimeUnit.SECONDS.sleep(generator.nextInt(time));
+				Commons.addedDelay = generator.nextInt(time);
+				TimeUnit.SECONDS.sleep(Commons.addedDelay);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
