@@ -62,11 +62,7 @@ GestureDetector.OnDoubleTapListener{
 
         
         MyView imageView = (MyView) findViewById(R.id.image_view);
-        BitmapFactory.Options bitmapFatoryOptions=new BitmapFactory.Options();
-		bitmapFatoryOptions.inPreferredConfig=Bitmap.Config.RGB_565;
-        imageView.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.faceswapping,bitmapFatoryOptions));
-        
-        imageView.buildDrawingCache();
+
         
         Button btn_finish = (Button) findViewById(R.id.finish_task);
         btn_finish.setOnClickListener(this);
