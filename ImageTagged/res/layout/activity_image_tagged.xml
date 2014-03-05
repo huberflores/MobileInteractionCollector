@@ -26,4 +26,24 @@
         android:layout_marginBottom="45dp"
         android:text="Take Picture" />
 
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="42dp"
+        android:text="Understanding QoE"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/btn_start"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="75dp"
+        android:text="If experiments are not available, then at least one picture has to be taken."
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
 </RelativeLayout>
