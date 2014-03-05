@@ -9,6 +9,7 @@ Installation
 - The project is mavenized, so you just need to import it into Eclipse.
 
 - Set /libs folder in your classpath
+
 Project -> right click -> properties -> Java build path -> Libraries -> Add class folder -> check libs/ folder
 
 Alternatively, build in terminal using
