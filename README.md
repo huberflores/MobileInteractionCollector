@@ -13,4 +13,14 @@ Project -> right click -> properties -> Java build path -> Libraries -> Add clas
 
 Alternatively, build in terminal using
 
+-------------
+```xml
+$ git clone https://github.com/huberflores/XMPPNotificationServer.git
+````
+
+-------------
+```xml
 $ mvn install
+````
+
+
