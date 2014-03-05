@@ -57,7 +57,7 @@ GestureDetector.OnDoubleTapListener{
 	Button btn_QoERating;
 	Button btn_extractDB;
 
-	
+	private String userMood = "Default";
 	
 	 @Override
 	    public void onCreate(Bundle savedInstanceState) {
@@ -289,19 +289,31 @@ GestureDetector.OnDoubleTapListener{
 					break;
 					
 				case R.id.btn_sendDatabase:
-					String userMood = getMood();
-					if (userMood==null){
-						userMood = "default";
-					}
-					extractDatabaseFile(new DatabaseCommons(userMood + "_"));
-					finish();
+						getMoodAndDatabase();
 					break;
 					
 				
 			}		
 			
 		}
-	 
+    	
+        public void getMoodAndDatabase(){
+    		final CharSequence states[] = new CharSequence[] {"Normal", "Emotional"};
+    	
+    		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    		builder.setTitle("Personal state");
+    		builder.setItems(states, new DialogInterface.OnClickListener() {
+    		    @Override
+    		    public void onClick(DialogInterface dialog, int which) {
+    		        userMood = states[which].toString();
+    		        extractDatabaseFile(new DatabaseCommons(userMood + "_"));
+    		        finish();
+    		    }
+    		});
+    		builder.create().show();
+    		
+    		
+    	}
 	 
 	 	public void taskButtons(){
 	 		btn_task1 = (Button) findViewById(R.id.btn_task1);

@@ -2,9 +2,12 @@ package symlab.ust.hk.imagetagged;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.logging.Logger;
 
 import symlab.ust.hk.imagetagged.Utilities.Commons;
@@ -16,9 +19,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.Bitmap.CompressFormat;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v4.view.GestureDetectorCompat;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -109,7 +116,12 @@ GestureDetector.OnDoubleTapListener {
 			case R.id.btn_QoEPicture:
 				
 				dManager.saveData("Button - Provide picture", "Press/Release event", press, release);
+			try {
 				openCamera();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 				break;
 				
 			case R.id.btn_submitQoE:
@@ -140,56 +152,139 @@ GestureDetector.OnDoubleTapListener {
 	
 	
 	//Camera
+		private File outputFileName;
+		
 		@Override
 	    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 	            super.onActivityResult(requestCode, resultCode, data);
-	     
-	            if(TAKE_PICTURE_CODE == requestCode){
+	         
+	            if(TAKE_PICTURE_CODE == requestCode){  
 	                    processCameraImage(data);
 	            }
 	    }
-	 
-		private void openCamera(){
-			Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+		
+		private void openCamera() throws IOException{
+			
+			outputFileName = createImageFile(".tmp");
+			Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+			takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(outputFileName));
 	     
-			startActivityForResult(intent, TAKE_PICTURE_CODE);
+			startActivityForResult(takePictureIntent, TAKE_PICTURE_CODE);
 		}
 		
-		private void processCameraImage(Intent intent){
-		    
-		     
-		    Bitmap rawBitmap = (Bitmap)intent.getExtras().get("data");
+			private void processCameraImage(Intent intent){
+		    			
+			int imageExifOrientation = 0;
 
-		    ByteArrayOutputStream bos = new ByteArrayOutputStream(); 
-		    rawBitmap.compress(CompressFormat.PNG, 0 /*ignored for PNG*/, bos); 
-		    byte[] bitmapdata = bos.toByteArray();
-		    ByteArrayInputStream bs = new ByteArrayInputStream(bitmapdata);
-		   
-		    
-		    BitmapFactory.Options bitmapFatoryOptions=new BitmapFactory.Options();
-			bitmapFatoryOptions.inPreferredConfig=Bitmap.Config.RGB_565;
-			Bitmap cameraBitmap=BitmapFactory.decodeStream(bs);
-			
-		    
-			
-			
-			String filepath = Commons.appPicturesPath + "facedetect" + System.currentTimeMillis() + ".jpg";
-	        
-	        try {
-	                FileOutputStream fos = new FileOutputStream(filepath);
-	                 
-	                cameraBitmap.compress(CompressFormat.JPEG, 90, fos);
-	                 
-	                fos.flush();
-	                fos.close();
-	        } catch (FileNotFoundException e) {
-	                e.printStackTrace();
-	        } catch (IOException e) {
-	                e.printStackTrace();
-	        }
-	        
+				    try
+				    {
 
+
+				    ExifInterface exif;
+				        exif = new ExifInterface(outputFileName.getAbsolutePath());
+				        imageExifOrientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,
+				                                    ExifInterface.ORIENTATION_NORMAL);
+				    }
+				    catch (IOException e1)
+				    {
+				        e1.printStackTrace();
+				    }
+
+				    int rotationAmount = 0;
+
+				    if (imageExifOrientation == ExifInterface.ORIENTATION_ROTATE_270)
+				    {
+				        // Need to do some rotating here...
+				        rotationAmount = 270;
+				    }
+				    if (imageExifOrientation == ExifInterface.ORIENTATION_ROTATE_90)
+				    {
+				        // Need to do some rotating here...
+				        rotationAmount = 90;
+				    }
+				    if (imageExifOrientation == ExifInterface.ORIENTATION_ROTATE_180)
+				    {
+				        // Need to do some rotating here...
+				        rotationAmount = 180;
+				    }       
+
+		    
+		    int targetW = 240;
+		    int targetH = 320; 
+
+		    BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+		    bmOptions.inJustDecodeBounds = true;
+		    BitmapFactory.decodeFile(outputFileName.getAbsolutePath(), bmOptions);
+		    int photoWidth = bmOptions.outWidth;
+		    int photoHeight = bmOptions.outHeight;
+
+		    int scaleFactor = Math.min(photoWidth/targetW, photoHeight/targetH);
+
+		    bmOptions.inJustDecodeBounds = false;
+		    bmOptions.inSampleSize = scaleFactor;
+		    bmOptions.inPurgeable = true;
+
+		    Bitmap scaledDownBitmap = BitmapFactory.decodeFile(outputFileName.getAbsolutePath(), bmOptions);
+		    
+		    if (rotationAmount != 0)
+		    {
+		        Matrix mat = new Matrix();
+		        mat.postRotate(rotationAmount);
+		        scaledDownBitmap = Bitmap.createBitmap(scaledDownBitmap, 0, 0, scaledDownBitmap.getWidth(), scaledDownBitmap.getHeight(), mat, true);
+		    }    
+
+		    FileOutputStream outFileStream = null;
+		    try
+		    {
+		        File mLastTakenImageAsJPEGFile = createImageFile(".jpg");
+		        outFileStream = new FileOutputStream(mLastTakenImageAsJPEGFile);
+		        scaledDownBitmap.compress(Bitmap.CompressFormat.JPEG, 75, outFileStream);
+		    }
+		    catch (Exception e)
+		    {  
+		        e.printStackTrace(); 
+		    } 
+		    
+
+			
+			
 		}
+		
+		
+		private File createImageFile(String fileExtensionToUse) throws IOException 
+		{
+
+		    File storageDir = new File(
+		            Environment.getExternalStoragePublicDirectory(
+		                Environment.DIRECTORY_PICTURES
+		            ), 
+		            "MyAppQoE"
+		        );      
+
+		    if(!storageDir.exists())
+		    {
+		        if (!storageDir.mkdir())
+		        {
+		            //Log.d(TAG,"was not able to create it");
+		        }
+		    }
+		    if (!storageDir.isDirectory())
+		    {
+		        //Log.d(TAG,"Don't think there is a dir there.");
+		    }
+
+		    // Create an image file name
+		    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+		    String imageFileName = "FOO_" + timeStamp + "_image";
+
+		    File image = File.createTempFile(
+		        imageFileName, 
+		        fileExtensionToUse, 
+		        storageDir
+		    );
+
+		    return image;
+		}    
 			
 		
 		

@@ -1,35 +1,32 @@
 package symlab.ust.hk.imagetagged;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
 import symlab.ust.hk.imagetagged.R;
 import symlab.ust.hk.imagetagged.Utilities.Commons;
-import symlab.ust.hk.imagetagged.Utilities.DatabaseCommons;
 import symlab.ust.hk.imagetagged.data.DatabaseManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.ContentValues;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.support.v4.view.GestureDetectorCompat;
 import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.view.GestureDetector;
 
@@ -52,6 +49,9 @@ GestureDetector.OnDoubleTapListener{
     private DatabaseManager dManager;
     
     private String userMood = "Default";
+    
+    private Button btn_start;
+    private Button btn_takePicture;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,24 +68,18 @@ GestureDetector.OnDoubleTapListener{
             }
         }
         
-        Button btn_start = (Button) findViewById(R.id.btn_start);
+        btn_start = (Button) findViewById(R.id.btn_start);
         btn_start.setOnClickListener(this);
         
         btn_start.setOnTouchListener(btnTouch); 
         
-        Button btn_takePicture = (Button) findViewById(R.id.btn_takePicture);
+        btn_takePicture = (Button) findViewById(R.id.btn_takePicture);
         btn_takePicture.setOnClickListener(this);
         
         btn_takePicture.setOnTouchListener(btnTouch);
         
         getDir(Commons.appPicturesPath);
-        if (listOfImages.size() > 0){
-        	
-        }else{
-        	btn_start.setEnabled(false); 
-        }
-        
-        
+        checkDirPictures();
         
         dManager = new DatabaseManager(this);
     	dManager.setDbUri(dbUri);
@@ -94,38 +88,7 @@ GestureDetector.OnDoubleTapListener{
         mDetector.setOnDoubleTapListener(this);
 
         
-		getMood();
-		extractDatabaseFile(new DatabaseCommons(userMood + "_"));
-		
-        
     }
-    
-    
-    public void extractDatabaseFile(DatabaseCommons db){			
-		   try { 
-			db.copyDatabaseFile();
-		   } catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace(); 
-		   }
-	}
-    
-    public void getMood(){
-		final CharSequence states[] = new CharSequence[] {"Normal", "Emotional"};
-		
-
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle("Personal state");
-		builder.setItems(states, new DialogInterface.OnClickListener() {
-		    @Override
-		    public void onClick(DialogInterface dialog, int which) {
-		        userMood = states[which].toString();
-		    }
-		});
-		builder.create().show();
-		
-		
-	}
 	
 
     @Override
@@ -151,7 +114,12 @@ GestureDetector.OnDoubleTapListener{
 			case R.id.btn_takePicture:
 				
 				dManager.saveData("Button - Take Picture", "Press/Release event", press, release);
+			try {
 				openCamera();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 				break;
 		}		
 		
@@ -243,74 +211,139 @@ GestureDetector.OnDoubleTapListener{
 	}
 	
 	//Camera
+	private File outputFileName;
+	
 	@Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		 ContentValues values = new ContentValues();
-         values.put(MediaStore.Images.Media.TITLE, "New Picture");
-         values.put(MediaStore.Images.Media.DESCRIPTION, "From your Camera");
-         Uri imageUri = getContentResolver().insert(
-                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-         intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-		
             super.onActivityResult(requestCode, resultCode, data);
          
             if(TAKE_PICTURE_CODE == requestCode){  
-                    processCameraImage(data, imageUri);
+                    processCameraImage(data);
             }
     }
 	
-	public String getRealPathFromURI(Uri contentUri) {
-        String[] proj = { MediaStore.Images.Media.DATA };
-        Cursor cursor = managedQuery(contentUri, proj, null, null, null);
-        int column_index = cursor
-                .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-        cursor.moveToFirst();
-        return cursor.getString(column_index);
-    }
- 
-	private void openCamera(){
-		Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+	private void openCamera() throws IOException{
+		
+		outputFileName = createImageFile(".tmp");
+		Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+		takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(outputFileName));
      
-		startActivityForResult(intent, TAKE_PICTURE_CODE);
+		startActivityForResult(takePictureIntent, TAKE_PICTURE_CODE);
 	}
 	
-	private void processCameraImage(Intent intent, Uri imageUri){
-	    
-	    String imageUrl =getRealPathFromURI(imageUri); 
-	    
-	    Bitmap rawBitmap = (Bitmap) intent.getExtras().get("data");
+		private void processCameraImage(Intent intent){
+	    			
+		int imageExifOrientation = 0;
 
-	    ByteArrayOutputStream bos = new ByteArrayOutputStream(); 
-	    rawBitmap.compress(CompressFormat.PNG, 0, bos); 
-	    byte[] bitmapdata = bos.toByteArray();
-	    ByteArrayInputStream bs = new ByteArrayInputStream(bitmapdata);
-	   
+			    try
+			    {
+
+
+			    ExifInterface exif;
+			        exif = new ExifInterface(outputFileName.getAbsolutePath());
+			        imageExifOrientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,
+			                                    ExifInterface.ORIENTATION_NORMAL);
+			    }
+			    catch (IOException e1)
+			    {
+			        e1.printStackTrace();
+			    }
+
+			    int rotationAmount = 0;
+
+			    if (imageExifOrientation == ExifInterface.ORIENTATION_ROTATE_270)
+			    {
+			        // Need to do some rotating here...
+			        rotationAmount = 270;
+			    }
+			    if (imageExifOrientation == ExifInterface.ORIENTATION_ROTATE_90)
+			    {
+			        // Need to do some rotating here...
+			        rotationAmount = 90;
+			    }
+			    if (imageExifOrientation == ExifInterface.ORIENTATION_ROTATE_180)
+			    {
+			        // Need to do some rotating here...
+			        rotationAmount = 180;
+			    }       
+
 	    
-	    BitmapFactory.Options bitmapFatoryOptions=new BitmapFactory.Options();
-		bitmapFatoryOptions.inPreferredConfig=Bitmap.Config.RGB_565;
-		Bitmap cameraBitmap=BitmapFactory.decodeStream(bs);
-		
+	    int targetW = 240;
+	    int targetH = 320; 
+
+	    BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+	    bmOptions.inJustDecodeBounds = true;
+	    BitmapFactory.decodeFile(outputFileName.getAbsolutePath(), bmOptions);
+	    int photoWidth = bmOptions.outWidth;
+	    int photoHeight = bmOptions.outHeight;
+
+	    int scaleFactor = Math.min(photoWidth/targetW, photoHeight/targetH);
+
+	    bmOptions.inJustDecodeBounds = false;
+	    bmOptions.inSampleSize = scaleFactor;
+	    bmOptions.inPurgeable = true;
+
+	    Bitmap scaledDownBitmap = BitmapFactory.decodeFile(outputFileName.getAbsolutePath(), bmOptions);
 	    
-		
-		String filepath = Commons.appPicturesPath + "facedetect" + System.currentTimeMillis() + ".jpg";
-        
-        try {
-                FileOutputStream fos = new FileOutputStream(filepath);
-                 
-                cameraBitmap.compress(CompressFormat.JPEG, 90, fos);
-                 
-                fos.flush();
-                fos.close();
-        } catch (FileNotFoundException e) {
-                e.printStackTrace();
-        } catch (IOException e) {
-                e.printStackTrace();
-        }
+	    if (rotationAmount != 0)
+	    {
+	        Matrix mat = new Matrix();
+	        mat.postRotate(rotationAmount);
+	        scaledDownBitmap = Bitmap.createBitmap(scaledDownBitmap, 0, 0, scaledDownBitmap.getWidth(), scaledDownBitmap.getHeight(), mat, true);
+	    }    
+
+	    FileOutputStream outFileStream = null;
+	    try
+	    {
+	        File mLastTakenImageAsJPEGFile = createImageFile(".jpg");
+	        outFileStream = new FileOutputStream(mLastTakenImageAsJPEGFile);
+	        scaledDownBitmap.compress(Bitmap.CompressFormat.JPEG, 75, outFileStream);
+	    }
+	    catch (Exception e)
+	    {  
+	        e.printStackTrace(); 
+	    } 
+	    
 
 		
 		
 	}
+	
+	
+	private File createImageFile(String fileExtensionToUse) throws IOException 
+	{
+
+	    File storageDir = new File(
+	            Environment.getExternalStoragePublicDirectory(
+	                Environment.DIRECTORY_PICTURES
+	            ), 
+	            "MyAppQoE"
+	        );      
+
+	    if(!storageDir.exists())
+	    {
+	        if (!storageDir.mkdir())
+	        {
+	            //Log.d(TAG,"was not able to create it");
+	        }
+	    }
+	    if (!storageDir.isDirectory())
+	    {
+	        //Log.d(TAG,"Don't think there is a dir there.");
+	    }
+
+	    // Create an image file name
+	    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+	    String imageFileName = "FOO_" + timeStamp + "_image";
+
+	    File image = File.createTempFile(
+	        imageFileName, 
+	        fileExtensionToUse, 
+	        storageDir
+	    );
+
+	    return image;
+	}    
 	
 	private void getDir(String dirPath)
 	 {
@@ -318,6 +351,11 @@ GestureDetector.OnDoubleTapListener{
 		 listOfImages = new ArrayList<String>();
 
 		 File f = new File(dirPath);
+		 
+		 if (!f.exists()){
+			 f.mkdir();
+		 }
+		 
 		 File[] files = f.listFiles();
 
 		 for(int i=0; i < files.length; i++)
@@ -348,7 +386,23 @@ GestureDetector.OnDoubleTapListener{
 	@Override
 	public void onRestart(){
 		super.onRestart();
-		Commons.currentTask = "Intro";
+		Commons.currentTask = "Intro"; 
+	}
+	
+	@Override
+	protected void onResume(){
+		super.onResume();
+		getDir(Commons.appPicturesPath);
+		checkDirPictures();
+	}
+	
+	public void checkDirPictures(){
+        if (listOfImages.size() > 0){
+        	btn_start.setEnabled(true);
+        }else{
+        	btn_start.setEnabled(false); 
+        }
+        
 	}
 
 }

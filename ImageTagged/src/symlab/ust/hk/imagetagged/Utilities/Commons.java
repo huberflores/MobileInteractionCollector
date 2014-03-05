@@ -1,5 +1,9 @@
 package symlab.ust.hk.imagetagged.Utilities;
 
+import java.io.File;
+
+import android.os.Environment;
+
 public class Commons {
 	public static String currentTask = "";
 	
@@ -7,9 +11,7 @@ public class Commons {
 		
 	public static boolean activateQoE = false; 
 	
-	public static String appPicturesPath = "/sdcard/Pictures/NAVER_LINE/";
-	
-		
+	public static String appPicturesPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/MyAppQoE";
 	
 
 }
