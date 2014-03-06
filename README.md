@@ -24,3 +24,6 @@ $ mvn install
 ````
 
 
+![alt text](https://raw.github.com/huberflores/MobileInteractionCollector/master/Screenshots/flow1.png "1-2")
+
+
