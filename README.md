@@ -26,4 +26,10 @@ $ mvn install
 
 ![alt text](https://raw.github.com/huberflores/MobileInteractionCollector/master/Screenshots/flow1.png "1-2")
 
+![alt text](https://raw.github.com/huberflores/MobileInteractionCollector/master/Screenshots/flow2.png "3-4")
+
+![alt text](https://raw.github.com/huberflores/MobileInteractionCollector/master/Screenshots/flow3.png "5-6")
+
+![alt text](https://raw.github.com/huberflores/MobileInteractionCollector/master/Screenshots/flow4.png "7-8")
+
 
