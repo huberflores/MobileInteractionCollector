@@ -14,7 +14,11 @@ Installation
 
 - Set /libs folder in your classpath
 
+```xml
+
 Project -> right click -> properties -> Java build path -> Libraries -> Add class folder -> check libs/ folder
+
+``` 
 
 Alternatively, build in terminal using
 
