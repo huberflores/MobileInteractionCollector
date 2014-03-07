@@ -1,7 +1,11 @@
 Mobile Interaction Collector
 ==========================
 
-Developed at HKUST(The Hong Kong University of Science and Technology) by [SyMLab](http://symlab.ust.hk/index.html)
+Developed at HKUST(The Hong Kong University of Science and Technology) by [SyMLab](http://symlab.ust.hk/index.html).
+
+The application implements a data collector mechanism (ContentProvider) based on SQLite. The data collected consists of gesture, and sensor information provided by the user while using the application.
+
+The aim of the application is to collect implicit feedback that can be utilized to improve the perception of the software developer for building applications with better QoE adaptability.
 
 Installation
 =============
