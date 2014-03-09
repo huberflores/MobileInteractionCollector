@@ -10,7 +10,7 @@ The aim of the application is to collect implicit feedback that can be utilized 
 Installation
 =============
 
-- The project is mavenized, so you just need to import it into Eclipse.
+- The project is mavenized, so you just need to import it into Eclipse. 
 
 - Set /libs folder in your classpath
 
